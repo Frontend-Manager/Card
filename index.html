@@ -3,130 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Intro Logo from URL</title>
-    
-    <!-- Bootstrap 5 CSS CDN -->
+    <title>Landing Page</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9JZSP50VoMxGI7eNGkW3OfwEo8omxVVk",
-            authDomain: "myproject-8ccb0.firebaseapp.com",
-            projectId: "myproject-8ccb0",
-            storageBucket: "myproject-8ccb0.firebasestorage.app",
-            messagingSenderId: "525228279287",
-            appId: "1:525228279287:web:a3a58f36b9387bc2029af2",
-            measurementId: "G-BR0YZY6ZPV"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadForm = document.getElementById('uploadForm');
-            const imageUrlInput = document.getElementById('imageUrlInput');
-            const successAlert = document.getElementById('successAlert');
-            const errorAlert = document.getElementById('errorAlert');
-            const imageUrlDiv = document.getElementById('imageUrlDiv');
-            const imagePreview = document.getElementById('imagePreview');
-            
-            uploadForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                const imageUrl = imageUrlInput.value;
-                if (!imageUrl) {
-                    alert('Please enter a valid image URL.');
-                    return;
-                }
-
-                // Fetch the image as a Blob from the URL
-                fetch(imageUrl)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Create a reference to the file in Firebase Storage
-                        const fileName = imageUrl.split('/').pop();  // Use the file name from the URL
-                        const storageRef = ref(storage, 'logos/' + fileName);
-
-                        // Upload the file (image blob) to Firebase Storage
-                        const uploadTask = uploadBytesResumable(storageRef, blob);
-
-                        uploadTask.on('state_changed', 
-                            (snapshot) => {
-                                // Optionally, you can track the upload progress here
-                            }, 
-                            (error) => {
-                                // Error handling
-                                errorAlert.style.display = 'block';
-                                console.error("Error uploading image:", error);
-                            }, 
-                            () => {
-                                // Success callback: get the download URL
-                                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                                    // Show success message
-                                    successAlert.style.display = 'block';
-                                    
-                                    // Display the uploaded image's URL
-                                    imageUrlDiv.innerHTML = `<p>Uploaded Image URL:</p><input type="text" class="form-control" value="${downloadURL}" readonly />`;
-                                    
-                                    // Show the uploaded image in a preview
-                                    imagePreview.src = downloadURL;
-                                    imagePreview.style.display = 'block';
-                                });
-                            }
-                        );
-                    })
-                    .catch((error) => {
-                        errorAlert.style.display = 'block';
-                        console.error("Error fetching image from URL:", error);
-                    });
-            });
-        });
-    </script>
-
     <style>
-        .container {
-            margin-top: 50px;
+        /* Modern Background with Subtle Gradient */
+        body {
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(220,238,249,1) 50%, rgba(174,193,211,1) 100%);
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        .alert {
-            display: none;
+
+        /* Centering Content */
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
         }
-        #imagePreview {
-            max-width: 100%;
+
+        /* Glassmorphism Effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(15px);
+            max-width: 350px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-effect:hover {
+            transform: scale(1.05); /* Slight scale effect on hover */
+        }
+
+        /* Logo Styling */
+        #logo {
+            max-width: 250px;
+            animation: fadeInOut 2s ease-in-out forwards;
+        }
+
+        /* Welcome Text Styling */
+        #welcomeText {
+            margin-top: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Typography Enhancements */
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: #666;
             margin-top: 20px;
-            display: none;
+            max-width: 350px;
+            line-height: 1.6;
+        }
+
+        /* Adding Responsiveness */
+        @media (max-width: 768px) {
+            .glass-effect {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h2 class="text-center">Upload Intro Logo from URL</h2>
-        
-        <!-- Form to enter image URL -->
-        <form id="uploadForm">
-            <div class="mb-3">
-                <label for="imageUrlInput" class="form-label">Enter Image URL</label>
-                <input type="text" class="form-control" id="imageUrlInput" required placeholder="Enter image URL">
-            </div>
-            <div class="alert alert-success" id="successAlert">Image uploaded successfully!</div>
-            <div class="alert alert-danger" id="errorAlert">Error uploading the image. Please try again.</div>
-            <button type="submit" class="btn btn-primary">Upload</button>
-        </form>
-
-        <!-- Div to show the uploaded image URL -->
-        <div id="imageUrlDiv" class="mt-4"></div>
-
-        <!-- Image Preview -->
-        <img id="imagePreview" alt="Uploaded Image Preview" class="img-fluid mt-4" />
+    <div class="center-content">
+        <!-- Glassmorphism Box -->
+        <div class="glass-effect">
+            <!-- Centered Logo -->
+            <img id="logo" src="images/download.png" alt="Logo" class="img-fluid">
+            
+            
+            
+            
+        </div>
     </div>
 
-    <!-- Bootstrap 5 JS CDN -->
+    <!-- Redirect Script -->
+    <script>
+        // Show "Welcome" text after the logo fades out
+        setTimeout(() => {
+            document.getElementById('logo').style.display = 'none'; // Hide the logo
+            document.getElementById('welcomeText').style.opacity = 1; // Show the "Welcome" text immediately after
+        }, 2000);
+
+        // Redirect to the admin page after 4 seconds
+        setTimeout(() => {
+            window.location.href = "https://digicard.fzbilling.tech";
+        }, 2000);
+    </script>
+
+    <!-- Bootstrap JS (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
